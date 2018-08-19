@@ -1,0 +1,111 @@
+<HTML>
+ <HEAD>
+  <TITLE>JavexScript</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF" BACKGROUND="paper.gif">
+  <CENTER>
+   <B>
+    <FONT SIZE="7">
+     <FONT FACE="arial">Javex</FONT>Script
+    </FONT>
+    <BR>
+    <I>
+     a suite of IRC Events tested to work with mIRC 5.0
+    </I>
+   </B>
+  </CENTER>
+  <DL>
+   <DT><B><FONT SIZE="4" COLOR="#8C1717" FACE="arial">Smart Invite</FONT></B><SUP>&reg;</SUP>
+   <DD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When someone on your Notify List gets on IRC, Smart Invite&reg; is triggered. First, Smart Invite&reg; gets the hostmask of the person who just joined IRC. Next, it looks at your Access Level List, and sees if their hostmask is a level <CODE><I><B>X</B></I></CODE> (Smart Invite&reg; works with <I>ANY</I> type of hostmask). If they are on level <CODE><I><B>X</B></I></CODE> in the Access Level List, it then checks to see if they're already on the channel. Finally it invites them to #Javex if they're not already on the channel and are a level X user.<BR><BR>
+    <CODE>ON 1@:NOTIFY:USERHOST $nick<BR>
+     RAW 302:* {<BR>
+     &nbsp;&nbsp;SET %nick $gettok($2,1,61)<BR>
+     &nbsp;&nbsp;SET %address $gettok($2,2,61)<BR>
+     &nbsp;&nbsp;%len = $len(%address) - 1<BR>
+     &nbsp;&nbsp;SET %address %nick $+ ! $+ $right(%address,%len)<BR>
+     &nbsp;&nbsp;if (($level(%address) == <I><B>X</B></I>) && ($me ISON #Javex) && (%nick !ISON #Javex)) { INVITE %nick #Javex }<BR>
+     }<BR><BR>
+    </CODE>
+   <DT><B><FONT SIZE="4" COLOR="#8C1717" FACE="arial">Idiot Protect</FONT></B><SUP>&reg;</SUP>
+   <DD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sometimes, people on #Javex op others based on their nickname, but sometimes it turns out they aren't a real Javex'er. This can be dangerous, once an outsider has ops on #Javex, they will have no trouble taking it over. Idiot Protect&reg; normally does nothing, but when someone who isn't a level <CODE><I><B>X</B></I></CODE> user is opped on #Javex, it will automatically deop them. To completely prevent this from ever happening, just add Smart Invite&reg; to your Events.<BR><BR>
+    <CODE>ON 1:JOIN:#:if ($nick == $me) WHO $chan<BR>
+     ON 1!@:OP:#Javex: {<BR>
+     &nbsp;&nbsp;if (($opnick != $me) && ($chan == #Javex)) {<BR>
+     &nbsp;&nbsp;&nbsp;&nbsp;SET %level $level($address($opnick,0))<BR>
+     &nbsp;&nbsp;&nbsp;&nbsp;if ((%level < <I><B>X</B></I>) && (%level != $null)) { MODE $chan -o $opnick }<BR>
+     &nbsp;&nbsp;}<BR>
+     }<BR><BR>
+    </CODE>
+   <DT><B><FONT SIZE="4" COLOR="#8C1717" FACE="arial">Spoof Deop</FONT></B><SUP>&reg;</SUP>
+   <DD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;People sometimes like to takeover channels (get ops and deop everyone else). It is possible to do this even on a +smtin channel if you go to a split server and deop everyone as soon as you merge. To protect against this, Spoof Deop&reg; waits for IRC servers to op someone who's not a Javex'er. As soon as they do this, Spoof Deop&reg; gets their hostmask and sees if they're on the level <CODE><I><B>X</B></I></CODE> list. If they are, it does nothing. If they aren't, it immeadiatly deops them. Preventing them from taking over the channel.<BR><BR>
+    <CODE>
+     ON 1@:SERVEROP:if ($level($address($opnick,0)) < <I><B>X</B></I>) MODE $chan -o $opnick<BR><BR>
+    </CODE>
+  </DL>
+  <CENTER>
+   <TABLE BORDER="0">
+    <TR>
+     <TD ALIGN="CENTER"><B><FONT FACE="arial">User Access List</FONT></B></TD>
+    </TR>
+    <TR>
+     <TD><HR></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*mdayah@*.conc.tds.net</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*bendzick@*.millcomm.com</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*mercury@*.ts.indy.net</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*jsohn@*.winternet.com</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*oxymoron@*.aimnet.com</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*aantolak@*.att.net</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*andys@*.duke.edu</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*hoffamn@*.millcomm.com</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*cubik@*.cjnetworks.com</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*andys@*.async.duke.edu</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*normal@*.nai.net</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*desposito@*.nai.net</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*mikej@*.cloudnet.com</CODE></TD>
+    </TR>
+    <TR>
+     <TD><CODE><I><B>X</B></I>:*!*aee@*.graffiti.net</CODE></TD>
+    </TR>
+    <TR>
+     <TD><HR></TD>
+    </TR>
+   </TABLE>
+  </CENTER>
+  <BR>
+  <B><FONT SIZE="5" FACE="arial">Remember...</FONT></B><BR>
+  <UL>
+   <LI>Replace all '<CODE><I><B>X</B></I></CODE>'s with the same number! It can be any number greater than 1.
+   <LI>Enable your Events with <CODE>/REMOTE ON</CODE>.
+   <LI>Enable your IAL by clicking <FONT FACE="arial"><U>T</U>ools...<U>R</U>emote...<U>O</U>ptions...<U>I</U>nternal address list</FONT>.
+   <LI>Keep your User Access List up-to-date. Type <CODE>//GUSER 3 NICKNAME 3</CODE> to add another Javex'er to your UAL.
+   <LI>Copy the Events exactly, don't go editing them unless you know what your doing.
+   <LI>Strange behavior of the Events is almost <I>always</I> because your UAL is not up-to-date.
+  </UL>
+ </BODY>
+</HTML>
